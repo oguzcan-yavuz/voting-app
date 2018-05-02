@@ -1,0 +1,15 @@
+extends layout
+
+block content
+    div(class="container title")
+        h2 Voting App
+    div(class="container")
+        p
+            a(href="https://github.com/yavuzovski/voting-app", target="_blank") See on Github
+            |  created by
+            a(href="https://www.freecodecamp.org/yavuzovski", target="_blank")  yavuzovski
+        ol(class="stories") User stories:
+            li.
+                I can submit a FormData object that includes a file upload.
+            li.
+                When I submit something, I will receive the file size in bytes within the JSON response

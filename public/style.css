@@ -1,0 +1,11 @@
+div.title {
+    margin-top: 20px;
+}
+
+ol.stories {
+    list-style: katakana-iroha inside;
+}
+
+footer {
+    margin-top: 20px;
+}
