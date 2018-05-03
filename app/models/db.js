@@ -1,16 +1,13 @@
 'use strict';
 
 const mongoose = require('mongoose');
-let connection;
 
-function createConnection() {
+function connectDB() {
     // connect and return the connection as a promise
     const uri = process.env.MONGO_URI;
     const options = {};
     mongoose.Promise = global.Promise;
-    mongoose.connect(uri, options).then(() => {
-        connection = mongoose.connection;
-    });
+    mongoose.connect(uri, options);
 }
 
-module.exports = { connection, createConnection };
+module.exports = { connectDB };

@@ -4,7 +4,7 @@ require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const favicon = require('serve-favicon');
-require('./app/models/db.js').createConnection();   // create db connection
+require('./app/models/db.js').connectDB();   // create db connection
 const session = require('./app/config/session');
 const passport = require('./app/config/passport.js');
 const router = require('./app/routes/index.js');
