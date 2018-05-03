@@ -1,7 +1,10 @@
 'use strict';
 
 const express = require('express');
+const pollsController = require('../controllers/pollsController.js');
+const usersController = require('../controllers/usersController.js');
 let router = express.Router();
+
 
 module.exports = (passport) => {
 
@@ -13,8 +16,12 @@ module.exports = (passport) => {
     }
 
     // home
-    router.get('/', isLoggedIn, (req, res) => {
-        res.render('index');
+    router.get('/', isLoggedIn, async (req, res) => {
+        let users = await usersController.getUsers();
+        let polls = await pollsController.getPolls();
+        console.log('users:', users);
+        console.log("polls:", polls);
+        res.render('index', { polls: polls });
     });
 
     // login

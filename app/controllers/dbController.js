@@ -1,9 +1,16 @@
 'use strict';
 
-class DatabaseController {
-    constructor(con) {
-        this.con = con;
-    }
+
+async function deleteAll(model) {
+    model.deleteMany({}, () => {});
 }
 
-module.exports = DatabaseController;
+async function findAll(model) {
+    return model.find().select('-_id');
+}
+
+async function insert(model, docs) {
+    return model.insertMany(docs);
+}
+
+module.exports = { findAll, deleteAll, insert };
