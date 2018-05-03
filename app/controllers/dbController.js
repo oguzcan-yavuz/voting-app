@@ -1,3 +1,9 @@
 'use strict';
 
-const con = require('../models/db.js').connection;
+class DatabaseController {
+    constructor(con) {
+        this.con = con;
+    }
+}
+
+module.exports = DatabaseController;
