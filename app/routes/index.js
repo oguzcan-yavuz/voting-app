@@ -12,27 +12,22 @@ module.exports = (passport) => {
         if(req.isAuthenticated())
             return next();
         else
-            res.redirect('/login');
+            res.redirect('/');
     }
 
     // home
-    router.get('/', isLoggedIn, async (req, res) => {
+    router.get('/', async (req, res) => {
         let users = await usersController.getUsers();
         let polls = await pollsController.getPolls();
         console.log('users:', users);
         console.log("polls:", polls);
-        res.render('index', { polls: polls });
-    });
-
-    // login
-    router.get('/login', (req, res) => {
-        res.render('login');
+        res.render('index', { polls: polls, authenticated: req.isAuthenticated() });
     });
 
     // logout
-    router.get('/logout', (req, res) => {
+    router.get('/logout', isLoggedIn, (req, res) => {
         req.logout();
-        res.redirect('/login');
+        res.redirect('/');
     });
 
     // authenticate github login with passport
@@ -41,7 +36,7 @@ module.exports = (passport) => {
     // redirect after authenticate
     router.get('/auth/github/callback', passport.authenticate('github', {
         successRedirect: '/',
-        failureRedirect: '/login'
+        failureRedirect: '/'
     }));
 
     return router;

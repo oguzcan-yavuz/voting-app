@@ -10,10 +10,27 @@ block content
             a(href="https://www.freecodecamp.org/yavuzovski", target="_blank")  yavuzovski
         ol(class="stories") User stories:
             li.
-                I can submit a FormData object that includes a file upload.
+                As an authenticated user, I can keep my polls and come back later to access them.
             li.
-                When I submit something, I will receive the file size in bytes within the JSON response
+                As an authenticated user, I can share my polls with my friends.
+            li.
+                As an authenticated user, I can see the aggregate results of my polls.
+            li.
+                As an authenticated user, I can delete polls that I decide I don't want anymore.
+            li.
+                As an authenticated user, I can create a poll with any number of possible items.
+            li.
+                As an unauthenticated or authenticated user, I can see and vote on everyone's polls.
+            li.
+                As an unauthenticated or authenticated user, I can see the results of polls in chart form. (This could be implemented using Chart.js or Google Charts.)
+            li.
+                As an authenticated user, if I don't like the options on a poll, I can create a new option.
     div(class="container")
-        include logout
+        if(authenticated)
+            include logout
+        else
+            include login
     div(class="container polls")
-        #{polls}
+        each poll in polls
+            code= poll
+            br

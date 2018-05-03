@@ -6,7 +6,7 @@ function getPolls() {
 }
 
 function createPoll(title, options) {
-    // await polls.insertMany({title: "first poll", options: [{name: "option 1", count: 0}, {name: "option 2", count: 5}], creationTime: new Date()});
+    // polls.insertMany({title: "second poll", options: [{name: "option 1", count: 3}, {name: "option 2", count: 2}], creationTime: new Date()});
     let doc = {
         title: title,
         options: {}
