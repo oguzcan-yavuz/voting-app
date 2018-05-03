@@ -34,6 +34,7 @@ passport.use(new GithubStrategy({
                 newUser.github.username = profile.username;
                 newUser.ownedPolls = [];
                 newUser.votedPolls = [];
+                newUser.registrationTime = new Date();
                 newUser.save((err) => {
                     if(err)
                         return done(err);

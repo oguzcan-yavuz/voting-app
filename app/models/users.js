@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 let Schema = mongoose.Schema;
-let polls = require('./polls');
+require('./polls');     // create Polls Schema at start so we can Ref it in Users Schema
 
 let User = new Schema({
     github: {
@@ -9,8 +9,8 @@ let User = new Schema({
         username: String,
     },
     ownedPolls: [{ type: Schema.Types.ObjectId, ref: 'Polls' }],
-    votedPolls: [{ type: Schema.Types.ObjectId, ref: 'Polls' }]
+    votedPolls: [{ type: Schema.Types.ObjectId, ref: 'Polls' }],
+    registrationTime: Date
 });
 
-mongoose.model('Polls', polls);
 module.exports = mongoose.model('Users', User);

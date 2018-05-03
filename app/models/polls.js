@@ -8,7 +8,8 @@ let polls = new Schema({
             name: String,
             count: Number
         }
-    ]
+    ],
+    creationTime: Date
 });
 
-module.exports = polls;
+module.exports = mongoose.model('Polls', polls);
