@@ -27,10 +27,11 @@ block content
                 As an authenticated user, if I don't like the options on a poll, I can create a new option.
     div(class="container")
         if(authenticated)
+            p Welcome, #{username}
             include logout
         else
             include login
     div(class="container polls")
         each poll in polls
-            code= poll
+            a(href="/polls/" + poll._id)= poll.title
             br
