@@ -6,9 +6,6 @@ const pollsController = require('./pollsController.js');
 
 class UsersController {
     constructor(user) {
-        // just check if username values in github object matches, ignore others
-        // let query = { 'github.username': username };
-        // this.user = dbController.findOne(users, query);
         this.user = user;
     }
 
@@ -16,31 +13,58 @@ class UsersController {
         return this.user;
     }
 
-    get getAllUsers() {
-        return dbController.findAll(users);
+    getOwnedPolls() {
+        return Promise.all(this.user.ownedPolls.map(poll => pollsController.getPoll(poll)));
     }
 
-    get getOwnedPolls() {
-        return this.user.ownedPolls;
+    get getVotedPolls() {
+        return this.user.votedPolls;
     }
 
-    isVoted(poll) {
-        let ownedPolls = this.getOwnedPolls;
-        return (ownedPolls.filter(ownedPoll => ownedPoll._id === poll._id)).length === 1;
+    updateCurrentUser(updatedUser) {
+        this.user = updatedUser;
     }
 
-    updateOwnedPolls(poll) {
+    updateOwnedPoll(poll, insert=true) {
         // push the created poll to the ownedPolls of this.user
-        let doc = { $push: { ownedPolls: poll } };
-        return dbController.update(this.user, doc);
+        let query = { _id: this.user._id };
+        let doc = (insert) ? { $push: { ownedPolls: poll } } : { $pull: { ownedPolls: poll } };
+        let options = { new: true };
+        return dbController.updateAndReturn(users, query, doc, options);
     }
 
-    createPoll(title, ...options) {
+    createPoll(title, options) {
         return pollsController.createPoll(title, options).then(poll => {
-            return this.updateOwnedPolls(poll[0]).then(() => {
+            return this.updateOwnedPoll(poll[0]).then(updatedUser => {
+                this.updateCurrentUser(updatedUser);
                 return poll[0];
             });
         });
+    }
+
+    isOwned(pollId) {
+        let ownedPolls = this.user.ownedPolls;
+        // this for loop pattern repeats itself
+        for(let poll of ownedPolls) {
+            if(poll.toString() === pollId)
+                return true;
+        }
+        return false;
+    }
+
+    deleteOwnedPoll(pollId) {
+        // check if the user really owns the given poll
+        if(this.isOwned(pollId)) {
+            return pollsController.deletePoll(pollId).then(() => {
+                // update user's ownedPolls.
+                return this.updateOwnedPoll(pollId, false).then(updatedUser => {
+                    this.updateCurrentUser(updatedUser);
+                    return updatedUser;
+                })
+            });
+        } else {
+            return Promise.reject("");
+        }
     }
 
 }
