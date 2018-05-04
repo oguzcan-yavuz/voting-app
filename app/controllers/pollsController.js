@@ -1,3 +1,5 @@
+'use strict';
+
 const polls = require('../models/polls.js');
 const dbController = require('./dbController');
 
@@ -6,12 +8,19 @@ function getPolls() {
 }
 
 function createPoll(title, options) {
-    // polls.insertMany({title: "second poll", options: [{name: "option 1", count: 3}, {name: "option 2", count: 2}], creationTime: new Date()});
     let doc = {
         title: title,
-        options: {}
+        // converts options array which includes option names to => [{ name: optionName, count: 0 }]
+        options: options.map(option => {
+            return { name: option, count: 0 };
+        }),
+        creationTime: new Date()
     };
-    return dbController.insert(doc);
+    return dbController.insert(polls, doc);
 }
 
-module.exports = { getPolls, createPoll };
+function getPoll(pollID) {
+    return dbController.findById(polls, pollID);
+}
+
+module.exports = { getPolls, createPoll, getPoll };
