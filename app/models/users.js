@@ -1,6 +1,7 @@
+'use strict';
+
 const mongoose = require('mongoose');
 let Schema = mongoose.Schema;
-require('./polls');     // create Polls Schema at start so we can Ref it in Users Schema
 
 let User = new Schema({
     github: {
