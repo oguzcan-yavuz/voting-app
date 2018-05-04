@@ -1,8 +1,11 @@
 'use strict';
 
+async function deleteOne(model, query) {
+    return model.deleteOne(query);
+}
 
 async function deleteAll(model) {
-    model.deleteMany({}, () => {});
+    return model.deleteMany({}, () => {});
 }
 
 async function findAll(model) {
@@ -17,8 +20,8 @@ async function findOne(model, query) {
     return model.findOne(query);
 }
 
-async function findOneAndUpdate(model, query, doc) {
-
+async function updateAndReturn(model, query, doc, options) {
+    return model.findOneAndUpdate(query, doc, options);
 }
 
 async function update(query, doc) {
@@ -29,4 +32,4 @@ async function findById(model, query) {
     return model.findById(query);
 }
 
-module.exports = { findAll, deleteAll, insert, findOne, findOneAndUpdate, findById, update };
+module.exports = { deleteOne, findAll, deleteAll, insert, findOne, findById, update, updateAndReturn };
