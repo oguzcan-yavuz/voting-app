@@ -10,7 +10,6 @@ let User = new Schema({
         username: String,
     },
     ownedPolls: [{ type: Schema.Types.ObjectId, ref: 'Polls' }],
-    votedPolls: [{ type: Schema.Types.ObjectId, ref: 'Polls' }],
     registrationTime: Date
 });
 

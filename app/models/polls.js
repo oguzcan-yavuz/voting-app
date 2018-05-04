@@ -11,6 +11,7 @@ let polls = new Schema({
             count: Number
         }
     ],
+    votedPeople: [],
     creationTime: Date
 });
 
