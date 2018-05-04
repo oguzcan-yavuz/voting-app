@@ -1,1 +1,13 @@
-p welcome, #{user}
+extends layout
+
+block content
+    div(class="container polls")
+        p welcome, #{user.github.username}
+        ul
+        each poll in ownedPolls
+            div(class="row")
+                div(class="col-md-4")
+                    a(href="/polls/details/" + poll._id)= poll.title
+                div(class="col-md-4")
+                    a(href="/polls/delete/" + poll._id, class="btn btn-danger btn-sm") DELETE
+            div(class="mt-2")

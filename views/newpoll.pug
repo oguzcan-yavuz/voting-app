@@ -1,0 +1,12 @@
+extends layout
+
+block content
+    div(class="container")
+        h4 Create a New Poll
+        form(action="/polls/newpoll/create", method="POST", id="createPoll")
+            div(class="container")
+                input(type="text", name="pollTitle", placeholder="title")
+                br
+                textarea(form="createPoll", name="pollOptions", cols="30", rows="10", placeholder="options separated by new line")
+                br
+                input(type="submit")

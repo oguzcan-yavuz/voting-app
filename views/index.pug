@@ -6,6 +6,7 @@ block content
     div(class="container")
         p
             a(href="https://github.com/yavuzovski/voting-app", target="_blank") See on Github
+            br
             |  created by
             a(href="https://www.freecodecamp.org/yavuzovski", target="_blank")  yavuzovski
         ol(class="stories") User stories:
@@ -26,12 +27,16 @@ block content
             li.
                 As an authenticated user, if I don't like the options on a poll, I can create a new option.
     div(class="container")
-        if(authenticated)
-            p Welcome, #{username}
+        if(user)
+            p Welcome, #{user.github.username}
+                |
+                a(href='/profile')  Profile
+                a(href='/polls/newpoll')  New Poll
             include logout
         else
             include login
     div(class="container polls")
+        h3 Polls
         each poll in polls
-            a(href="/polls/" + poll._id)= poll.title
+            a(href="/polls/details/" + poll._id)= poll.title
             br
