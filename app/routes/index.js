@@ -2,8 +2,8 @@
 
 const express = require('express');
 const pollsController = require('../controllers/pollsController.js');
-const usersController = require('../controllers/usersController.js');
-let UsersController;
+const UsersController = require('../controllers/usersController.js');
+let usersController;
 let router = express.Router();
 
 
@@ -17,50 +17,59 @@ module.exports = (passport) => {
 
     // home
     router.get('/', async (req, res) => {
-        let polls = await pollsController.getPolls();
-        let users, currentUser, ownedPolls, isVoted, newPoll;
-        if(req.isAuthenticated()) {
-            // newPoll = await UsersController.createPoll("I guess sixth poll created from UsersController", "it works", "it doesn't works", "no idea");
-            users = await UsersController.getAllUsers;
-            currentUser = UsersController.getCurrentUser;
-            ownedPolls = UsersController.getOwnedPolls;
-            isVoted = UsersController.isVoted(polls[0]);
-        }
+        let polls = await pollsController.getAllPolls();
+        let currentUser = req.user;
         let renderVars = {
             polls: polls,
-            authenticated: req.isAuthenticated(),
-            username: (currentUser) ? currentUser.github.username : null
+            user: currentUser
         };
-        console.log("newPoll:", newPoll);
-        console.log('users:', users);
-        console.log("polls:", polls);
-        console.log("current user:", currentUser);
-        console.log("owned polls:", ownedPolls);
-        console.log("isVoted:", isVoted);
         res.render('index', renderVars);
     });
 
-    // logout
-    router.get('/logout', isLoggedIn, (req, res) => {
-        req.logout();
-        res.redirect('/');
-    });
-
-    // profile
-    router.get('/profile', isLoggedIn, (req, res) => {
-        let currentUser = UsersController.getCurrentUser;
-        res.render('profile', { user: currentUser });
-    });
-
     // poll details
-    router.get('/polls/:pollID', async (req, res) => {
-        pollsController.getPoll(req.params.pollID)
+    router.get('/polls/details/:pollId', async (req, res) => {
+        let pollId = req.params.pollId;
+        pollsController.getPoll(pollId)
             .then(poll => {
                 res.render('pollDetails', { poll: poll });
             })
             .catch(err => {
+                console.error(err);
                 res.redirect('/');
             })
+    });
+
+    // delete poll
+    router.get('/polls/delete/:pollId', isLoggedIn, async (req, res) => {
+        let pollId = req.params.pollId;
+        usersController.deleteOwnedPoll(pollId)
+            .then(() => {
+                res.redirect('/profile');
+            })
+            .catch(err => {
+                console.error(err);
+                res.send("You don't own this poll!");
+            })
+    });
+
+    // new poll
+    router.get('/polls/newpoll', isLoggedIn, (req, res) => {
+        res.render('newpoll');
+    });
+
+    // new poll post
+    router.post('/polls/newpoll/create', isLoggedIn, async (req, res) => {
+        let title = req.body.pollTitle;
+        let options = req.body.pollOptions;
+        let newPoll = await usersController.createPoll(title, options);
+        res.redirect('/polls/details/' + newPoll._id);
+    });
+
+    // profile
+    router.get('/profile', isLoggedIn, async (req, res) => {
+        let currentUser = usersController.getCurrentUser;
+        let ownedPolls = await usersController.getOwnedPolls();
+        res.render('profile', { user: currentUser, ownedPolls: ownedPolls });
     });
 
     // authenticate github login with passport
@@ -68,9 +77,15 @@ module.exports = (passport) => {
 
     // redirect after authenticate
     router.get('/auth/github/callback', passport.authenticate('github'), (req, res) => {
-        // initialize UsersController with the logged in user if authentication is successful
+        // initialize usersController with the logged in user if authentication is successful
         if(req.isAuthenticated())
-            UsersController = new usersController(req.user);
+            usersController = new UsersController(req.user);
+        res.redirect('/');
+    });
+
+    // logout
+    router.get('/logout', isLoggedIn, (req, res) => {
+        req.logout();
         res.redirect('/');
     });
 
