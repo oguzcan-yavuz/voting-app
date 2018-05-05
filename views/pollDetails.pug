@@ -1,5 +1,8 @@
-div(class="container")
-    p #{poll.title}
-    each option in poll.options
-        a(href="#")= option.name
-        br
+extends layout
+
+block content
+    div(class="container")
+        p #{poll.title}
+        each option in poll.options
+            a(href="#")= option.name
+            br

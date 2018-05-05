@@ -27,7 +27,7 @@ module.exports = (passport) => {
     });
 
     // poll details
-    router.get('/polls/details/:pollId', async (req, res) => {
+    router.get('/polls/details/:pollId', (req, res) => {
         let pollId = req.params.pollId;
         pollsController.getPoll(pollId)
             .then(poll => {
@@ -40,7 +40,7 @@ module.exports = (passport) => {
     });
 
     // delete poll
-    router.get('/polls/delete/:pollId', isLoggedIn, async (req, res) => {
+    router.get('/polls/delete/:pollId', isLoggedIn, (req, res) => {
         let pollId = req.params.pollId;
         usersController.deleteOwnedPoll(pollId)
             .then(() => {

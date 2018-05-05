@@ -17,10 +17,6 @@ class UsersController {
         return Promise.all(this.user.ownedPolls.map(poll => pollsController.getPoll(poll)));
     }
 
-    get getVotedPolls() {
-        return this.user.votedPolls;
-    }
-
     updateCurrentUser(updatedUser) {
         this.user = updatedUser;
     }

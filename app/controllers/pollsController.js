@@ -10,10 +10,11 @@ function getAllPolls() {
 function createPoll(title, options) {
     let doc = {
         title: title,
-        // converts options array which includes option names to => [{ name: optionName, count: 0 }]
+        // converts options string to => [{ name: optionName, count: 0 }]
         options: options.split("\n").map(option => {
             return { name: option, count: 0 };
         }),
+        votedPeople: [],
         creationTime: new Date()
     };
     return dbController.insert(polls, doc);
