@@ -1,14 +1,3 @@
-async function callFetchFromVote(url, options) {
-    return fetch(url, options)
-        .then(response => {
-            return response.json()
-                .then(res => {
-                    return (response.status === 406) ? Promise.reject(res.error) : res;
-                })
-        })
-        .catch(err => Promise.reject(err))
-}
-
 function getVoteCounts(poll, optionId) {
     for(let option of poll.options) {
         if(option._id === optionId)
@@ -22,7 +11,7 @@ function modifyVoteCount(elementId, newValue) {
     counter.innerHTML = newValue;
 }
 
-function vote(buttonId) {
+async function vote(buttonId) {
     const pollId = window.location.pathname.split('/').pop();
     const url = window.location.origin + "/api/polls/vote/" + pollId;
     const reqBody = { optionId: buttonId };
@@ -34,13 +23,13 @@ function vote(buttonId) {
         },
         credentials: 'include'
     };
-    callFetchFromVote(url, options)
-        .then(res => {
-            console.log("res:", res);
-            let voteCount = getVoteCounts(res, buttonId);
-            modifyVoteCount(buttonId, voteCount);
-        })
-        .catch(err => {
-            alert(err);
-        })
+    const response = await fetch(url, options);
+    const body = await response.json();
+    if(response.status === 406)
+        alert(body.error);
+    else {
+        console.log("res:", res);
+        let voteCount = getVoteCounts(res, buttonId);
+        modifyVoteCount(buttonId, voteCount);
+    }
 }

@@ -1,17 +1,8 @@
-async function callFetchFromNewOptions(url, options) {
-    return fetch(url, options)
-        .then(response => {
-            return response.json()
-                .then(res => res)
-        })
-        .catch(err => Promise.reject(err))
-}
-
 function modifyOptions() {
     // TODO: parse the response and add new options to the page
 }
 
-function createNewOptions() {
+async function createNewOptions() {
     const pollId = window.location.pathname.split('/').pop();
     const url = window.location.origin + "/api/polls/newOptions/" + pollId;
     const givenOptions = document.getElementById("newOptionsField").value;
@@ -24,11 +15,7 @@ function createNewOptions() {
         },
         credentials: 'include'
     };
-    callFetchFromNewOptions(url, options)
-        .then(res => {
-            console.log(res);
-        })
-        .catch(err => {
-            console.error(err);
-        })
+    const response = await fetch(url, options);
+    const body = await response.json();
+    console.log(body);
 }
