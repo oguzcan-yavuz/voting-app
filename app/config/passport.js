@@ -1,7 +1,7 @@
 'use strict';
 
 const passport = require('passport');
-const GithubStrategy = require('passport-github').Strategy;
+const TwitterStrategy = require('passport-twitter').Strategy;
 const User = require('../models/users.js');
 const authConfig = require('./auth.js');
 
@@ -16,24 +16,23 @@ passport.deserializeUser((id, done) => {
     })
 });
 
-passport.use(new GithubStrategy({
-    clientID: authConfig.githubAuth.clientID,
-    clientSecret: authConfig.githubAuth.clientSecret,
-    callbackURL: authConfig.githubAuth.callbackURL,
+passport.use(new TwitterStrategy({
+    consumerKey: authConfig.twitterAuth.consumerKey,
+    consumerSecret: authConfig.twitterAuth.consumerSecret,
+    callbackURL: authConfig.twitterAuth.callbackURL,
 }, (token, refreshToken, profile, done) => {
     process.nextTick(() => {
-        User.findOne({ 'github.id': profile.id }, (err, user) => {
+        User.findOne({ 'twitter.id': profile.id }, (err, user) => {
             if(err)
                 return done(err);
             if(user)
                 return done(null, user);
             else {
                 let newUser = new User();
-                newUser.github.id = profile.id;
-                newUser.github.displayName = profile.displayName;
-                newUser.github.username = profile.username;
+                newUser.twitter.id = profile.id;
+                newUser.twitter.username = profile.username;
+                newUser.twitter.displayName = profile.displayName;
                 newUser.ownedPolls = [];
-                newUser.votedPolls = [];
                 newUser.registrationTime = new Date();
                 newUser.save((err) => {
                     if(err)

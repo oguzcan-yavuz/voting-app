@@ -4,10 +4,10 @@ const mongoose = require('mongoose');
 let Schema = mongoose.Schema;
 
 let User = new Schema({
-    github: {
+    twitter: {
         id: String,
-        displayName: String,
         username: String,
+        displayName: String
     },
     ownedPolls: [{ type: Schema.Types.ObjectId, ref: 'Polls' }],
     registrationTime: Date
