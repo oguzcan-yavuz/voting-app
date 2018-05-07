@@ -1,5 +1,6 @@
 'use strict';
 
+const ObjectId = require('mongoose').Types.ObjectId;
 const polls = require('../models/polls.js');
 const dbController = require('./dbController');
 
@@ -7,13 +8,19 @@ function getAllPolls() {
     return dbController.findAll(polls);
 }
 
+function convertOptions(optionsStr, delimeter) {
+    // converts options string to => [{ name: optionName, count: 0 }]
+    return optionsStr.split(delimeter).reduce((results, option) => {
+        if(option !== "")
+            results.push({ name: option, count: 0 });
+        return results;
+    }, []);
+}
+
 function createPoll(title, options) {
     let doc = {
         title: title,
-        // converts options string to => [{ name: optionName, count: 0 }]
-        options: options.split("\n").map(option => {
-            return { name: option, count: 0 };
-        }),
+        options: convertOptions(options, "\r\n"),
         votedPeople: [],
         creationTime: new Date()
     };
@@ -30,13 +37,28 @@ function deletePoll(pollId) {
 }
 
 async function isVoted(person, pollId) {
-    // let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;     // client's ip
     let poll = await getPoll(pollId);
     for(let votedPerson of poll.votedPeople) {
-        if(person === votedPerson)
+        if(person === votedPerson.toString())
             return true;
     }
     return false;
 }
 
-module.exports = { getAllPolls, createPoll, getPoll, deletePoll, isVoted };
+async function votePoll(pollId, votedOptionId, votedPerson) {
+    // update votedPeople and voted option's count fields
+    votedOptionId = ObjectId(votedOptionId);
+    let query = { _id: pollId };
+    let doc = { $push: { votedPeople: votedPerson }, $inc: { 'options.$[option].count': 1 } };
+    let options = { new: true, arrayFilters: [ { 'option._id': votedOptionId } ] };
+    return await dbController.updateAndReturn(polls, query, doc, options);
+}
+
+async function pushOptions(pollId, optionNames) {
+    let query = { _id: pollId };
+    let doc = { $push: { options: convertOptions(optionNames, '\n') } };
+    let options = { new: true };
+    return await dbController.updateAndReturn(polls, query, doc, options);
+}
+
+module.exports = { getAllPolls, createPoll, getPoll, deletePoll, isVoted, votePoll, pushOptions };

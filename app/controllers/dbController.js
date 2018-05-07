@@ -8,10 +8,6 @@ async function deleteAll(model) {
     return model.deleteMany({}, () => {});
 }
 
-// async function findOne(model, query) {
-//     return model.findOne(query);
-// }
-
 async function findById(model, query) {
     return model.findById(query);
 }
