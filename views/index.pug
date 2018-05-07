@@ -28,7 +28,7 @@ block content
                 As an authenticated user, if I don't like the options on a poll, I can create a new option.
     div(class="container")
         if(user)
-            p Welcome, #{user.github.username}
+            p Welcome, #{user.twitter.displayName}
                 |
                 a(href='/profile')  Profile
                 a(href='/polls/newpoll')  New Poll

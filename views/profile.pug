@@ -2,7 +2,7 @@ extends layout
 
 block content
     div(class="container polls")
-        p welcome, #{user.github.username}
+        p welcome, #{user.twitter.displayName}
         ul
         each poll in ownedPolls
             div(class="row")
