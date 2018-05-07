@@ -28,8 +28,8 @@ async function vote(buttonId) {
     if(response.status === 406)
         alert(body.error);
     else {
-        console.log("res:", res);
-        let voteCount = getVoteCounts(res, buttonId);
+        console.log("body:", body);
+        let voteCount = getVoteCounts(body, buttonId);
         modifyVoteCount(buttonId, voteCount);
     }
 }
