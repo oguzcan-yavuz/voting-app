@@ -18,12 +18,7 @@ module.exports = (passport) => {
     // home
     router.get('/', async (req, res) => {
         let polls = await pollsController.getAllPolls();
-        let currentUser = req.user;
-        let renderVars = {
-            polls: polls,
-            user: currentUser
-        };
-        res.render('index', renderVars);
+        res.render('index', { polls: polls, user: req.user });
     });
 
     // poll details
@@ -31,12 +26,33 @@ module.exports = (passport) => {
         let pollId = req.params.pollId;
         pollsController.getPoll(pollId)
             .then(poll => {
-                res.render('pollDetails', { poll: poll });
+                res.render('pollDetails', { poll: poll, user: req.user });
             })
             .catch(err => {
                 console.error(err);
                 res.redirect('/');
             })
+    });
+
+    // post vote
+    router.post('/api/polls/vote/:pollId', async (req, res) => {
+        // get the logged in user or IP address of unauthenticated user
+        let pollId = req.params.pollId;
+        let optionId = req.body.optionId;
+        let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+        let currentPerson = (req.isAuthenticated()) ? req.user.twitter.username : ip;
+        let isVoted = await pollsController.isVoted(currentPerson, pollId);
+        if(isVoted)
+            res.status(406).json({ error: "You have already voted for this poll!" });
+        else
+            res.json(await pollsController.votePoll(pollId, optionId, currentPerson));
+    });
+
+    // post option
+    router.post('/api/polls/newOptions/:pollId', isLoggedIn, async (req, res) => {
+        let pollId = req.params.pollId;
+        let optionNames = req.body.options;
+        res.json(await pollsController.pushOptions(pollId, optionNames));
     });
 
     // delete poll
@@ -73,10 +89,10 @@ module.exports = (passport) => {
     });
 
     // authenticate github login with passport
-    router.get('/auth/github', passport.authenticate('github'));
+    router.get('/auth/twitter', passport.authenticate('twitter'));
 
     // redirect after authenticate
-    router.get('/auth/github/callback', passport.authenticate('github'), (req, res) => {
+    router.get('/auth/twitter/callback', passport.authenticate('twitter'), (req, res) => {
         // initialize usersController with the logged in user if authentication is successful
         if(req.isAuthenticated())
             usersController = new UsersController(req.user);
