@@ -23,15 +23,15 @@ module.exports = (passport) => {
 
     // poll details
     router.get('/polls/details/:pollId', (req, res) => {
+        res.render('pollDetails', { user: req.user });
+    });
+
+    // poll details api
+    router.get('/api/polls/details/:pollId', async (req, res) => {
         let pollId = req.params.pollId;
-        pollsController.getPoll(pollId)
-            .then(poll => {
-                res.render('pollDetails', { poll: poll, user: req.user });
-            })
-            .catch(err => {
-                console.error(err);
-                res.redirect('/');
-            })
+        let poll = await pollsController.getPoll(pollId);
+        let loggedIn = req.isAuthenticated();
+        res.json({ poll: poll, loggedIn: loggedIn });
     });
 
     // post vote
@@ -45,14 +45,14 @@ module.exports = (passport) => {
         if(isVoted)
             res.status(406).json({ error: "You have already voted for this poll!" });
         else
-            res.json(await pollsController.votePoll(pollId, optionId, currentPerson));
+            res.json({ poll: await pollsController.votePoll(pollId, optionId, currentPerson) });
     });
 
     // post option
     router.post('/api/polls/newOptions/:pollId', isLoggedIn, async (req, res) => {
         let pollId = req.params.pollId;
         let optionNames = req.body.options;
-        res.json(await pollsController.pushOptions(pollId, optionNames));
+        res.json({ poll: await pollsController.pushOptions(pollId, optionNames) });
     });
 
     // delete poll

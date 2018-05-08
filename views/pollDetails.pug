@@ -2,22 +2,14 @@ extends layout
 
 block content
     div(class="container poll")
-        p #{poll.title}
         a(href="https://twitter.com/share?ref_src=twsrc%5Etfw", class="twitter-share-button", data-show-count="false") Tweet
-        each option in poll.options
-            button(type="button", class="btn option", id=option._id, onClick="vote(this.id)")= option.name
-            li= option.count
-            br
-            br
-    if(user)
-        div(class="container newOptions")
-            textarea(id="newOptionsField")
-            br
-            button(type="button", class="btn", onClick="createNewOptions()") Add New Options
-
+        br
+        br
+    div(class="container", id="react")
 
 block javascript
+    script(crossorigin, src="https://unpkg.com/react@16/umd/react.production.min.js")
+    script(crossorigin, src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js")
     script(async, src="https://platform.twitter.com/widgets.js", charset="utf-8")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js")
     script(src="/static/js/vote.js")
-    if(user)
-        script(src="/static/js/newOptions.js")
