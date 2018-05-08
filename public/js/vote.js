@@ -70,6 +70,7 @@ class Poll extends React.Component {
         };
         const response = await fetch(url, options);
         const body = await response.json();
+        console.log("body: ", body);
         if(response.status === 406)
             alert(body.error);
         else {

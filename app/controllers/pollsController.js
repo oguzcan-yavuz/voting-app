@@ -49,11 +49,12 @@ async function votePoll(pollId, votedOptionId, votedPerson) {
     // update votedPeople and voted option's count fields
     votedOptionId = ObjectId(votedOptionId);
     let query = { _id: pollId, 'option._id': votedOptionId };
-    // let doc = { $push: { votedPeople: votedPerson }, $inc: { 'options.$[option].count': 1 } };
     let doc = { $push: { votedPeople: votedPerson }, $inc: { 'options.$.count': 1 } };
-    // let options = { new: true, arrayFilters: [ { 'option._id': votedOptionId } ] };
     let options = { new: true };
-    return await dbController.updateAndReturn(polls, query, doc, options);
+    let r = await dbController.updateAndReturn(polls, query, doc, options);
+    console.log("server side: ", r);
+    return r;
+    // return await dbController.updateAndReturn(polls, query, doc, options);
 }
 
 async function pushOptions(pollId, optionNames) {
