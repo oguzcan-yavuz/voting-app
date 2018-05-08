@@ -2,10 +2,9 @@
 
 const ObjectId = require('mongoose').Types.ObjectId;
 const polls = require('../models/polls.js');
-const dbController = require('./dbController');
 
 function getAllPolls() {
-    return dbController.findAll(polls);
+    return polls.find();
 }
 
 function convertOptions(optionsStr, delimeter) {
@@ -24,16 +23,16 @@ function createPoll(title, options) {
         votedPeople: [],
         creationTime: new Date()
     };
-    return dbController.insert(polls, doc);
+    return polls.insertMany(doc);
 }
 
 function getPoll(pollId) {
-    return dbController.findById(polls, pollId);
+    return polls.findById(pollId);
 }
 
 function deletePoll(pollId) {
     let query = { _id: pollId };
-    return dbController.deleteOne(polls, query);
+    return polls.deleteOne(query);
 }
 
 async function isVoted(person, pollId) {
@@ -51,14 +50,14 @@ async function votePoll(pollId, votedOptionId, votedPerson) {
     let query = { _id: pollId };
     let doc = { $push: { votedPeople: votedPerson }, $inc: { 'options.$[option].count': 1 } };
     let options = { new: true, arrayFilters: [ { 'option._id': votedOptionId } ] };
-    return await dbController.updateAndReturn(polls, query, doc, options);
+    return await polls.findOneAndUpdate(query, doc, options);
 }
 
 async function pushOptions(pollId, optionNames) {
     let query = { _id: pollId };
     let doc = { $push: { options: convertOptions(optionNames, '\n') } };
     let options = { new: true };
-    return await dbController.updateAndReturn(polls, query, doc, options);
+    return await polls.findOneAndUpdate(query, doc, options);
 }
 
 module.exports = { getAllPolls, createPoll, getPoll, deletePoll, isVoted, votePoll, pushOptions };

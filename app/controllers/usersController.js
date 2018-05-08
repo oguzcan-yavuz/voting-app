@@ -1,7 +1,6 @@
 'use strict';
 
 const users = require('../models/users.js');
-const dbController = require('./dbController');
 const pollsController = require('./pollsController.js');
 
 class UsersController {
@@ -26,7 +25,7 @@ class UsersController {
         let query = { _id: this.user._id };
         let doc = (insert) ? { $push: { ownedPolls: poll } } : { $pull: { ownedPolls: poll } };
         let options = { new: true };
-        return dbController.updateAndReturn(users, query, doc, options);
+        return users.findOneAndUpdate(query, doc, options);
     }
 
     createPoll(title, options) {
