@@ -88,7 +88,7 @@ module.exports = (passport) => {
         res.render('profile', { user: currentUser, ownedPolls: ownedPolls });
     });
 
-    // authenticate github login with passport
+    // authenticate twitter login with passport
     router.get('/auth/twitter', passport.authenticate('twitter'));
 
     // redirect after authenticate
