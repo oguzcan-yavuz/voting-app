@@ -13,3 +13,4 @@ Freecodecamp Dynamic Web Application Project: Build a Voting App
 - Don't forget to include `credentials` while using Fetch API if you need to pass user info.
 - Use React more efficiently next time.
 - I didn't pay much attention to the front-end of this project, just tried to complete user stories.
+- If something went wrong after deploying, check the versions of the dependencies.
